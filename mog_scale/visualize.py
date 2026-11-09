@@ -15,6 +15,7 @@ def draw_face(
     frame: np.ndarray,
     face: FaceResult,
     score: Optional[ScoreBreakdown] = None,
+    fusion_score: Optional[float] = None,
     fps: Optional[float] = None,
     logging_on: bool = False,
 ) -> np.ndarray:
@@ -47,7 +48,7 @@ def draw_face(
         1,
     )
 
-    _draw_hud(out, score, fps, logging_on)
+    _draw_hud(out, score, fusion_score, fps, logging_on)
     return out
 
 
@@ -55,6 +56,7 @@ def draw_no_face(
     frame: np.ndarray,
     fps: Optional[float] = None,
     logging_on: bool = False,
+    fusion_score: Optional[float] = None,
 ) -> np.ndarray:
     out = frame.copy()
     cv2.putText(
@@ -67,20 +69,22 @@ def draw_no_face(
         2,
         cv2.LINE_AA,
     )
-    _draw_hud(out, None, fps, logging_on)
+    _draw_hud(out, None, fusion_score, fps, logging_on)
     return out
 
 
 def _draw_hud(
     out: np.ndarray,
     score: Optional[ScoreBreakdown],
+    fusion_score: Optional[float],
     fps: Optional[float],
     logging_on: bool,
 ) -> None:
     h, w = out.shape[:2]
     panel_w = 240
+    panel_h = 210 if fusion_score is not None else 170
     overlay = out.copy()
-    cv2.rectangle(overlay, (w - panel_w - 8, 8), (w - 8, 170), (20, 20, 20), -1)
+    cv2.rectangle(overlay, (w - panel_w - 8, 8), (w - 8, panel_h), (20, 20, 20), -1)
     cv2.addWeighted(overlay, 0.55, out, 0.45, 0, out)
 
     x0 = w - panel_w
@@ -105,6 +109,19 @@ def _draw_hud(
         y += 28
     else:
         y += 20
+
+    if fusion_score is not None:
+        cv2.putText(
+            out,
+            f"Mog Score {fusion_score:5.1f}",
+            (x0, y),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.55,
+            (200, 200, 200),
+            1,
+            cv2.LINE_AA,
+        )
+        y += 24
 
     if fps is not None:
         cv2.putText(

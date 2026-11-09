@@ -11,6 +11,10 @@ data/logs/*.csv
 data/crops/*
 !data/logs/.gitkeep
 !data/crops/.gitkeep
+data/mebeauty/*
+!data/mebeauty/.gitkeep
+checkpoints/*
+!checkpoints/.gitkeep
 models/*
 !models/.gitkeep
 .DS_Store
