@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.idea/
+.vscode/
+*.onnx
+data/logs/*.csv
+data/crops/*
+!data/logs/.gitkeep
+!data/crops/.gitkeep
+models/*
+!models/.gitkeep
+.DS_Store
+Thumbs.db
