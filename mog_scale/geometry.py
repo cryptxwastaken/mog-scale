@@ -57,17 +57,16 @@ def extract_geometry(face: FaceResult) -> Tuple[np.ndarray, Dict[str, float]]:
     nose = lm[LM_NOSE]
     rm, lm_pt = lm[LM_RIGHT_MOUTH], lm[LM_LEFT_MOUTH]
 
-    # Midline from eye midpoint projected vertically (image x).
+    # Midline from nose x; eye midpoint still used for thirds / nose offset.
+    mid_x = float(nose[0])
     eye_mid_x = 0.5 * (re[0] + le[0])
     eye_mid_y = 0.5 * (re[1] + le[1])
-    mouth_mid_x = 0.5 * (rm[0] + lm_pt[0])
-    mouth_mid_y = 0.5 * (rm[1] + lm_pt[1])
 
-    # Bilateral distances to midline (normalized by face width).
-    re_dx = abs(re[0] - eye_mid_x) / face_w
-    le_dx = abs(le[0] - eye_mid_x) / face_w
-    rm_dx = abs(rm[0] - mouth_mid_x) / face_w
-    lm_dx = abs(lm_pt[0] - mouth_mid_x) / face_w
+    # Bilateral distances to nose midline (normalized by face width).
+    re_dx = abs(re[0] - mid_x) / face_w
+    le_dx = abs(le[0] - mid_x) / face_w
+    rm_dx = abs(rm[0] - mid_x) / face_w
+    lm_dx = abs(lm_pt[0] - mid_x) / face_w
     symmetry_error = abs(re_dx - le_dx) + abs(rm_dx - lm_dx)
 
     eye_height_asym = abs(re[1] - le[1]) / face_h

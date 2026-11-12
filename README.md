@@ -46,12 +46,19 @@ git clone https://github.com/fbplab/MEBeauty-database.git
 
 # back in mog-scale
 python scripts/prepare_mebeauty.py --mebeauty-root ..\MEBeauty-database
-python scripts/train_fusion.py --epochs 20
+python scripts/train_fusion.py
 python main.py live --checkpoint checkpoints/fusion.pt
 ```
 
 `prepare_mebeauty.py` runs YuNet + geometry on each scored crop and writes `data/mebeauty/{train,val,test}.csv` with labels scaled to 0–100 (`raw_score * 10`).  
-`train_fusion.py` trains `HybridFusionNet` (image CNN + geometry MLP) and saves the best val checkpoint to `checkpoints/fusion.pt`.
+`train_fusion.py` fine-tunes `HybridFusionNet` (pretrained ResNet18 + geometry MLP) with augmentation, cosine LR, and early stopping. The best val checkpoint is saved to `checkpoints/fusion.pt`.
+
+### How to read the metrics
+
+- **baseline** — MSE if you always predict the train-set mean rating. Your model should beat this.
+- **val_mse / val_rmse** — error on held-out validation (lower is better). RMSE is on the same 0–100 scale as Mog Score.
+- **val_r** — Pearson correlation between predictions and true labels (−1…1). Higher is better; this is the main quality signal.
+- After training, a one-shot **test** line reports the same metrics on `test.csv`.
 
 ## Layout
 
